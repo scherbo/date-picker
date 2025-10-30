@@ -1,7 +1,10 @@
-#root {
+.root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+  padding-top: 15rem;
+  display: flex;
+  justify-content: center;
   text-align: center;
 }
 

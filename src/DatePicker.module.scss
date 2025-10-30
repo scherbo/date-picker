@@ -1,0 +1,59 @@
+.container {
+    --color-primary: #9B8DE2;
+    --max-width: 292px;
+    --spacing: 12px;
+    --cell-width: calc((var(--max-width) - var(--spacing)) / 7);
+
+    max-width: var(--max-width);
+}
+
+.grid {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    row-gap: 0.125rem;
+    flex-wrap: wrap;
+    user-select: none;
+}
+
+.month {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    button {
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+.week {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+
+    div {
+        flex-basis: var(--cell-width);
+        font-size: 0.75rem;
+    }
+}
+
+.cell {
+    flex-basis: var(--cell-width);
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    border-radius: 0.25rem;
+
+    &.notActiveMonth {
+        background-color: #333;
+    }
+
+    &.selected {
+        background-color: var(--color-primary)
+    }
+
+    &:hover:not(.selected) {
+        background-color: rgb(from var(--color-primary) r g b / 25%);
+    }
+}
