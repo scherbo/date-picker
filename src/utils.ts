@@ -23,15 +23,15 @@ const months = [
     'December',
 ] as const;
 
-enum ErrorMessage {
-    invalidDayIndexArgument = 'Invalid "dayIndex" argument value',
-    invalidMonthIndexArgument = 'Invalid "monthIndex" argument value',
+export enum MonthType {
+    Previous = 'previous',
+    Displayed = 'displayed',
+    Next = 'next',
 };
 
-export type TypedDay = Day & {
-    type: 'previous' | 'active' | 'next';
-    monthIndex: number;
-    year: number;
+export enum ErrorMessage {
+    invalidDayIndexArgument = 'Invalid "dayIndex" argument value',
+    invalidMonthIndexArgument = 'Invalid "monthIndex" argument value',
 };
 
 export function getDaysInMonth(year: number, month: number) {
@@ -42,20 +42,38 @@ export function getWeekDay(year: number, month: number, day: number) {
     return new Date(year, month, day).getDay();
 }
 
-export function getPrevMonth(month: number) {
-    return month === 0 ? months.length - 1 : month - 1;
+/**
+ * 
+ * @param oldMonth
+ * @returns new previous month
+ */
+export function getPrevMonth(oldMonth: number) {
+    return oldMonth === 0 ? months.length - 1 : oldMonth - 1;
 }
 
-export function getNextMonth(month: number) {
-    return month === months.length - 1 ? 0 : month + 1;
+/**
+ * 
+ * @param oldMonth
+ * @returns  new next month
+ */
+export function getNextMonth(oldMonth: number) {
+    return oldMonth === months.length - 1 ? 0 : oldMonth + 1;
 }
 
-export function getPrevYear(year: number, prevMonth: number) {
-    return prevMonth === months.length - 1 ? year - 1 : year;
+/**
+ * 
+ * @returns new year value based on the new previous month value;
+ */
+export function getPrevYear(currentYear: number, newPrevMonth: number) {
+    return newPrevMonth === months.length - 1 ? currentYear - 1 : currentYear;
 }
 
-export function getNextYear(year: number, nextMonth: number) {
-    return nextMonth === 0 ? year + 1 : year;
+/**
+ * 
+ * @returns new year value based on the new next month value;
+ */
+export function getNextYear(currentYear: number, newNextMonth: number) {
+    return newNextMonth === 0 ? currentYear + 1 : currentYear;
 }
 
 /**
@@ -69,7 +87,6 @@ export function getMonthName(monthIndex: number) {
 
     return months[monthIndex];
 }
-
 
 /**
  * 
@@ -89,7 +106,7 @@ export function getWeekDayName(dayIndex: number) {
  * @returns number of days to pad
  * @throws in case index is not in the range
  */
-export function padStartWeekDays(dayIndex: number) {
+export function getDaysToPadStart(dayIndex: number) {
     if (dayIndex < 0 || dayIndex >= week.length) throw new Error(ErrorMessage.invalidDayIndexArgument);
     return dayIndex === 0 ? week.length - 1 : dayIndex - 1;
 }
@@ -100,20 +117,24 @@ export function padStartWeekDays(dayIndex: number) {
  * @returns number of days to pad
  * @throws in case index is not in the range
  */
-export function padEndWeekDays(dayIndex: number) {
+export function getDaysToPadEnd(dayIndex: number) {
     if (dayIndex < 0 || dayIndex >= week.length) throw new Error(ErrorMessage.invalidDayIndexArgument);
     return dayIndex === 0 ? 0 : week.length - dayIndex;
 }
 
-export class Day {
+export class CustomDate {
+    year: number;
+    monthIndex: number;
     value: number;
     weekDayIndex: number;
     weekDayName: string;
 
-    constructor(value: number, weekDayIndex: number) {
+    constructor(year: number, monthIndex: number, value: number) {
+        this.year = year;
+        this.monthIndex = monthIndex;
         this.value = value;
-        this.weekDayIndex = weekDayIndex;
-        this.weekDayName = getWeekDayName(weekDayIndex);
+        this.weekDayIndex = getWeekDay(year, monthIndex, value);
+        this.weekDayName = getWeekDayName(this.weekDayIndex);
     }
 }
 
@@ -121,23 +142,25 @@ export class Month {
     year: number;
     monthIndex: number;
     name: string;
-    days: Day[];
+    type: MonthType;
+    days: CustomDate[];
 
-    constructor(year: number, monthIndex: number) {
+    constructor(year: number, monthIndex: number, type: MonthType) {
         this.year = year;
         this.monthIndex = monthIndex;
         this.name = getMonthName(monthIndex);
+        this.type = type;
 
         const daysCount = getDaysInMonth(year, monthIndex);
-        this.days = constructDays(daysCount, getWeekDay(year, monthIndex, 1));
+        this.days = constructMonthDays(year, monthIndex, daysCount, getWeekDay(year, monthIndex, 1));
     }
 }
 
-export function constructDays(count: number, firstDayWeekIndex: number) {
+export function constructMonthDays(year: number, monthIndex: number, count: number, firstDayWeekIndex: number) {
     const days = Array(count);
 
     for (let i = 0; i < days.length; i++) {
-        const day = new Day(i + 1, firstDayWeekIndex);
+        const day = new CustomDate(year, monthIndex, i + 1);
         days[i] = day;
 
         firstDayWeekIndex = ++firstDayWeekIndex % week.length;
@@ -146,6 +169,6 @@ export function constructDays(count: number, firstDayWeekIndex: number) {
     return days;
 }
 
-export function isSameDay(a?: TypedDay, b?: TypedDay) {
+export function isSameDate(a?: CustomDate, b?: CustomDate) {
     return a && b && a.year === b.year && a.monthIndex === b.monthIndex && a.value === b.value;
 }
