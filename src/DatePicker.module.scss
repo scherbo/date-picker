@@ -1,25 +1,37 @@
 .container {
-    --color-primary: #9B8DE2;
     --max-width: 292px;
-    --spacing: 12px;
-    --cell-width: calc((var(--max-width) - var(--spacing)) / 7);
+    --columns: repeat(7, 1fr);
 
     max-width: var(--max-width);
+    width: 100%;
+    position: relative;
+}
+
+.dropdown {
+    width: 100%;
+    margin-top: 0.25rem;
+    text-align: center;
+    padding: 0.5rem;
+    background-color: #1a1a1a;
+    border-radius: 0.5rem;
+    position: absolute;
 }
 
 .grid {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    row-gap: 0.125rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: var(--columns);
+    row-gap: 0.25rem;
+    column-gap: 0.25rem;
     user-select: none;
+    text-align: center;
 }
 
 .month {
     display: flex;
     justify-content: space-between;
-    column-gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem 0;
     margin-bottom: 0.5rem;
 
     button {
@@ -28,25 +40,24 @@
 }
 
 .week {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: var(--columns);
     margin-bottom: 0.5rem;
 
     div {
-        flex-basis: var(--cell-width);
         font-size: 0.75rem;
+        text-align: center;
     }
 }
 
 .cell {
-    flex-basis: var(--cell-width);
     height: 40px;
     line-height: 40px;
     cursor: pointer;
     border-radius: 0.25rem;
 
     &.notActiveMonth {
-        background-color: #333;
+        background-color: var(--color-dark-gray);
     }
 
     &.selected {
@@ -54,6 +65,6 @@
     }
 
     &:hover:not(.selected) {
-        background-color: rgb(from var(--color-primary) r g b / 25%);
+        background-color: var(--color-primary-50);
     }
 }

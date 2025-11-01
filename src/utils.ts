@@ -152,23 +152,35 @@ export class Month {
         this.type = type;
 
         const daysCount = getDaysInMonth(year, monthIndex);
-        this.days = constructMonthDays(year, monthIndex, daysCount, getWeekDay(year, monthIndex, 1));
+        this.days = constructMonthDays(year, monthIndex, daysCount);
     }
 }
 
-export function constructMonthDays(year: number, monthIndex: number, count: number, firstDayWeekIndex: number) {
+export function constructMonthDays(year: number, monthIndex: number, count: number) {
     const days = Array(count);
 
     for (let i = 0; i < days.length; i++) {
         const day = new CustomDate(year, monthIndex, i + 1);
         days[i] = day;
-
-        firstDayWeekIndex = ++firstDayWeekIndex % week.length;
     }
 
     return days;
 }
 
 export function isSameDate(a?: CustomDate, b?: CustomDate) {
-    return a && b && a.year === b.year && a.monthIndex === b.monthIndex && a.value === b.value;
+    return Boolean(a && b && a.year === b.year && a.monthIndex === b.monthIndex && a.value === b.value);
+}
+
+export function getDateString(date: CustomDate | Date) {
+    if (date instanceof CustomDate) {
+        const mm = String(date.monthIndex + 1).padStart(2, '0');
+        const dd = String(date.value).padStart(2, '0');
+        return `${dd}/${mm}/${date.year}`;
+    }
+
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+
+    return `${dd}/${mm}/${yyyy}`;
 }

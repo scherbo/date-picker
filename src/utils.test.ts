@@ -14,6 +14,7 @@ import {
     CustomDate,
     Month,
     MonthType,
+    getDateString,
 } from "./utils";
 
 describe(getDaysInMonth.name, () => {
@@ -137,3 +138,16 @@ describe(Month.name, () => {
         expect(month.days[0]).toBeInstanceOf(CustomDate);
     });
 });
+
+describe(getDateString.name, () => {
+    test('constructs date string from CustomDate instance', () => {
+        const str = getDateString(new CustomDate(2025, 10, 1));
+        expect(str).toBe('01/11/2025')
+    })
+
+    test('constructs date string from Date instance', () => {
+        const str = getDateString(new Date(2025, 10, 1));
+
+        expect(str).toBe('01/11/2025')
+    })
+})
