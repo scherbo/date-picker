@@ -130,7 +130,7 @@ function DatePickerDropdown(props: DatePickerDropdownProps) {
 	}
 
 	return (
-		<div className={styles.dropdown} tabIndex={-1}>
+		<div className={styles.dropdown} tabIndex={-1} role="dialog">
 			<div className={styles.month}>
 				<button type="button" onClick={handlePrevMonth}>prev</button>
 				<span>{displayedMonth.name} &nbsp;{displayedMonth.year}</span>
